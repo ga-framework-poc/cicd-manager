@@ -5,13 +5,13 @@ on:
   workflow_dispatch:
 jobs:
   build-from-source:
-    uses: nicks-world/cicd-manager/.github/workflows/build-from-source.yml@main
+    uses: hippyod/cicd-manager/.github/workflows/build-from-source.yml@main
     with:
       system-name: %SYSTEM_NAME%
       team-name: %TEAM_NAME%
   deploy-to-dev:
     needs: build-from-source
-    uses: nicks-world/cicd-manager/.github/workflows/promote.yml@main
+    uses: hippyod/cicd-manager/.github/workflows/promote.yml@main
     with:
       system-name: %SYSTEM_NAME%
       team-name: %TEAM_NAME%
@@ -34,7 +34,7 @@ jobs:
       name: clone-cicd-manager-repo
       uses: actions/checkout@v2
       with:
-        repository: nicks-world/cicd-manager
+        repository: hippyod/cicd-manager
         ref: main
         path: ${{ env.CICD_REPO_MGR_DIR }}
         token: ${{ env.PAT_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
       test-environments: ${{ steps.parse-system-def.outputs.test-environments }}
   deploy-to-test:
     needs: gather-test-environments
-    uses: nicks-world/cicd-manager/.github/workflows/promote.yml@main
+    uses: hippyod/cicd-manager/.github/workflows/promote.yml@main
     with:
       system-name: %SYSTEM_NAME%
       team-name: %TEAM_NAME%

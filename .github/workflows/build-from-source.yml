@@ -16,7 +16,7 @@ jobs:
     steps:
     - id: setup-environment
       name: setup-environment
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: infra
         step-name: setup-environment
@@ -24,13 +24,13 @@ jobs:
       name: clone-cicd-manager-repo
       uses: actions/checkout@v2
       with:
-        repository: nicks-world/cicd-manager
+        repository: hippyod/cicd-manager
         ref: main
         path: ${{ env.CICD_REPO_MGR_DIR }}
         token: ${{ env.PAT_TOKEN }}
     - id: parse-system-def
       name: parse-system-def
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: infra
         step-name: parse-system-def
@@ -42,37 +42,37 @@ jobs:
         path: ${{ env.WORKING_DIR }}
     - id: build
       name: build
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: ${{ env.CODEBASE }}
         step-name: build
     - id: test
       name: test
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: ${{ env.CODEBASE }}
         step-name: test
     - id: scan
       name: scan
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: ${{ env.CODEBASE }}
         step-name: scan
     - id: build-image
       name: build-image
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: image
         step-name: build-image
     - id: scan-image
       name: scan-image
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: image
         step-name: scan-image
     - id: push-image
       name: push-image
-      uses: nicks-world/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@main
       with:
         label: image
         step-name: push-image
