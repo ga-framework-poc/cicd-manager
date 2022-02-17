@@ -91,7 +91,7 @@ jobs:
               git -C ${WORKING_DIR} config user.email ${cicd-team@my-org.com}
               git -C ${WORKING_DIR} config user.name ${GITHUB_ACTOR}
               git -C ${WORKING_DIR} add -A
-              git -C ${WORKING_DIR} commit -am 'installing latest cicd-manager GitHub Action Workflow(s)'
+              git -C ${WORKING_DIR} commit -am '[skip ci] installing latest cicd-manager GitHub Action Workflow(s)'
               git -C ${WORKING_DIR} push
           else
               echo "${{ matrix.component-repo }} is unchanged.  Skipping..."
