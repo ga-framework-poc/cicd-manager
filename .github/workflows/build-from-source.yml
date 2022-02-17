@@ -10,7 +10,7 @@ on:
         type: string
 jobs:
   build-to-image:
-    runs-on: [build.mdw.nicks.world, "${{ inputs.team-name }}"]
+    runs-on: ubuntu-latest
     env:
       SYSTEM_NAME: ${{ inputs.system-name }}
     steps:

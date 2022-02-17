@@ -14,7 +14,7 @@ on:
         default: '["dev"]'
 jobs:
   promote-and-deploy:
-    runs-on: [ build.mdw.nicks.world, "${{ inputs.team-name }}"]
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
       matrix:
