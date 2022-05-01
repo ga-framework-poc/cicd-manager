@@ -1,5 +1,6 @@
 organization: hippyod
 team: team-a
+branch: development
 components:
   - repo: cicd-poc-app-1
     codebase: java11
