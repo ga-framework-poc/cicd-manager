@@ -16,7 +16,7 @@ jobs:
     steps:
     - id: setup-environment
       name: setup-environment
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: infra
         step-name: setup-environment
@@ -30,7 +30,7 @@ jobs:
         token: ${{ env.PAT_TOKEN }}
     - id: parse-system-def
       name: parse-system-def
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: infra
         step-name: parse-system-def
@@ -42,37 +42,37 @@ jobs:
         path: ${{ env.WORKING_DIR }}
     - id: build
       name: build
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: build
     - id: test
       name: test
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: test
     - id: scan
       name: scan
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: scan
     - id: build-image
       name: build-image
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: image
         step-name: build-image
     - id: scan-image
       name: scan-image
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: image
         step-name: scan-image
     - id: push-image
       name: push-image
-      uses: hippyod/cicd-manager/run-step@main
+      uses: hippyod/cicd-manager/run-step@development
       with:
         label: image
         step-name: push-image
