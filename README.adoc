@@ -12,10 +12,10 @@ This document will summarize the design and concepts around a group of GitHub Ac
 
 == Assumptions
 
-* Promotion will be automated (i.e. promoting from one SDLC environment to the next will not be manual)
-* Every environment will run tests after deployment
-* The CICD system will assume that GitHub Action runners are self-hosted
-* Secrets are accessed from within the container orchestration platform, and not within GitHub
+* Promotion will be automated (i.e. promoting from one SDLC environment to the next will not be manual).
+* Every environment will run tests after deployment.
+* The CICD system will assume that GitHub Action runners are self-hosted.
+* GitHub credentials are GitHub secrets.
 * Each Git repository will consist of exactly one component or microservice.
 * Readers are familiar with Git, GitHub Actions, and Kubernetes.
 
@@ -27,39 +27,50 @@ The design assumes three separate functional goals for the system:
 * _Build from Source_: Build a Git repository into an OCI compliant image and push to an image registry
 * _Promotion and Deployment_: Promote the image to the next environment if already deployed, and deploy the image into the container orchestration platform
 
-=== Directory Structure
+=== Repositories and Directory Structure
 
-* *.github*
-    ** *system-defs*: Contains all <<System Definitions,system definitions>>
-    ** *workflows*: Contains all reusable (centralized) GitHub Action <<Reusable Workflows,workflows>>
-* *.github-app-template*
-    ** *workflows*: Contains a YAML template of a workflow to be embedded in component repositories, and uses the reusable workflows in this repository
-    ** *CODEOWNERS* (file): GitHub specific file for setting permissions withing a directory.  Ensures only the infra and/or CICD will be able to push changes or approve pull requests to the workflows realized from this directory in a component Git repository.
-* *run-step*
-    ** *steps*: Contains all directories for each <<Codebases,codebase>>
-        *** *<codebase id>*: Directories named for each codebase ID, and the naming convention helps with leveraging the <<Run Steps,run step>> framework.
+* *cicd-onboarding*: Onboarding repository.  Should be private to organization, and no one should have access outside of nfra and/or CICD privileged users to protect organization GitHub Secrets.
+  ** *.github*
+    *** *workflows*: Contains all onboarding workflow
+  ** *.github-app-template*
+    ** *workflows*: Contains a YAML template of a workflow to be embedded in component repositories.  The template uses the reusable workflows defined in the cicd-manager repository.
+    ** *CODEOWNERS* (file): GitHub specific file for setting permissions within a directory.  Ensures only infra and/or CICD privileged users will be able to push changes or approve pull requests to the workflows realized from this directory in a component Git repository.
+
+* *cicd-manager*: should be view only, and public (until reusable Workflows can be used from less privileged GitHub repositories).
+  ** *.github*
+    *** *system-defs*: Contains all <<System Definitions,system definitions>>
+    *** *workflows*: Contains all reusable (centralized) GitHub Action <<Reusable Workflows,workflows>>
+  ** *run-step*
+    *** _action.yml_: custom GitHub Action for finding and running shell scripts based on <<Codebase,codebase>> and workflow job step labels.
+    *** *steps*: Contains all directories for each <<Codebase,codebase>>
+      **** *<codebase id>*: Directories named for each <<Codebase,codebase>> ID, and the naming convention helps with leveraging the <<Run Steps,run step>> framework.  Each directory will contain a set of scripts specific to the <<Codebase,codebase>> and named corresponding the actual step defined in the workflow.
 
 === System Definitions
 
-Collections of related software components, each in an individual Git repository, will each be defined in a YAML based configuration file owned and managed by the CICD team.  Each configuration file will the define the <<Codebases,codebase>> the component was developed with and the Git repo where the component resides.  It will also contain a list of test environments the CICD system should provide to support each components SDLC.
+Collections of related software components, each in an individual Git repository, will be defined in a YAML based configuration file owned and managed by the CICD team.  Each configuration file will define the <<Codebase,codebase>> the component was developed with and the Git repo where the component resides.  It will also contain a list of test environments the CICD system should provide to support each components SDLC (optional).
 
 [#sample-system-def]
 .sample-system-def.yml
 [source,YAML]
 ----
+# GitHub organization the system repositories belong to
 organization: corp-org-name
+# Team name should correspond to a k8s/OCP RBAC group the system belongs to
+team: team-name
+# List of all components that make up a system; should correspond to a single namespace
 components:
   - repo: microservice-a
     # java11 is an example of a codebase ID
     codebase: java11 
     # status is an example of other possible fields that could add 
-    # further information for an organization or team
+    # further information for an organization or team; end users
+    # may define an arbitrary number of additional properties per component
     status: active
-  - repo: cicd-poc-app-2
+  - repo: microservice-2
     codebase: node16
     status: active
     overrides:
-      # example of a component specific override the CICD system
+      # example of a component specific override for tests in the CICD system
       test: jest
 # list of test environments used by the CICD system to support the SDLC
 # development, pre-production, and production environments are assumed
@@ -71,7 +82,7 @@ test-environments:
 
 ==== Codebase
 
-An arbitrary ID created by the organization and assigned to each repository to designate the platform and language of a set of repositories.  This ID is used by the <<Run Steps,run-step>> framework to determine which scripts to run to build, test, and scan a repository's source code and/or build artifacts.
+An arbitrary ID created by the organization and assigned to each repository to designate the platform and language of a set of repositories.  This ID is used by the <<Run Steps,run-step>> framework to determine which scripts to run.
 
 === Reusable Workflows
 
@@ -79,7 +90,7 @@ GitHub Actions enables reusable workflows.  This CICD system utilizes that featu
 
 === Run Steps
 
-A homegrown convention-over-configuration framework for injecting scripts into the CICD system's workflows.  Depending on the ID used, scripts will be called from the `run-step` action; e.g.:
+A homegrown https://en.wikipedia.org/wiki/Convention_over_configuration[convention-over-configuration] framework for injecting scripts into the CICD system's workflows.  Depending on the <<Codebase,codebase>> ID used, scripts will be called from the `run-step` action; e.g.:
 
 .Example of a GitHub Action Step using the run-step action
 [source,YAML]
@@ -88,21 +99,25 @@ A homegrown convention-over-configuration framework for injecting scripts into t
       name: test
       uses: corp-org-name/cicd-manager/run-step@main
       with:
-        label: ${{ env.CODEBASE }}
+        label: java11
         step-name: test
 ----
 
-In the above example, the label will determine which directory in the `run-step` directory in which to look for the script, and the `step-name` will determine the name of the script to run.  In cases where the `step-name` needs to be overridden from it's default value, it can be done with an override key/value pair in the <<System Definitions, System Definition File>>.  In the system definition <<sample-system-def,example>> above, the `test` step is overridden to run the `jest.sh` script in the `node16` directory, rather than the default `test.sh` expected in that directory.
+In the above example, the _label_ will determine which directory in the `run-step` directory in which to look for the script, and the `step-name` will determine the name of the script to run; e.g. the above example defines will look in the `cicd-manager/run-step/java11` directory and execute `test.sh`.
 
-==== System Onboarding
+==== Overriding Run Steps
 
-The workflow (onboard-system.yml) for realizing and copying the `.github-app-template` into a system component repository.  The template for a caller workflow that calls the centralized, reusable workflows is injected with the system name, copied into the target system component repository and renamed `.github`, and committed and pushed back to the repository.
+In order to reduce duplication where only a single run step needs to change, the run step may be overridden in the <<System Definitions, System Definition File>> by providing an override key/value pair.  In the example system definition <<sample-system-def,example>> above, the `test` step is overridden to run the `jest.sh` script in the `cicd-manager/run-step/node16` directory, rather than the default `test.sh` expected by default by the test run step.
 
-In this way, the organization can control the CICD workflows across all component repositories from this central, CICD repository.  Changes to the workflows in this repository can be instantly realized organization-wide simply by committing changes back into this repository.
+==== System Onboarding and Manager
+
+System onboarding process of bringing a GitHub repository under the control of the CICD system, and the workflow defined by `onboard-system.yml` in the `cicd-onboarding` repository automates this process.  The workflow will realize and copy the `.github-app-template` into a system component repository as a `.github` directory, and commit and push the realized `.github` directory back to each system component's GitHub repository.
+
+The template is designed such as a skeleton workflow that calls the reusable workflows defined in the `cicd-manager` repository.  Because the organization uses a single, central repository to define workflows, workflows across all components in the organization can be standardized.  Changes to the workflows in this repository will be instantly realized organization-wide simply by committing changes back into this repository on the appropriate branch.
 
 ==== Build
 
-The build is represented by a single workflow (build-from-source.yml).  The steps are summarized as follows:
+The build is represented by a single workflow `build-from-source.yml`.  The steps are summarized as follows:
 
 * Check out the source
 * Build the source (if necessary)
@@ -113,10 +128,10 @@ The build is represented by a single workflow (build-from-source.yml).  The step
 * Push the image to a registry
 
 Since building, testing, and scanning will be different given the platform, language, testing frameworks, etc., the <<Codebase,codebase>> ID in the <<System Definitions,system definition file>> is used by the <<Run Steps,run step>> framework to determine how a repository is built, tested, and scanned.
-
+ [TBD: currently undefined]
 === Promote and Deploy
 
-Image promotion and deployment is governed by a single workflow (promote.yml).  The workflow uses a GithHub Actions matrix to manage deployment the development environment directly after the <<Build,build>> takes place.  The matrix is able to run serially instead of in parallel thanks to the `max-parallel` value being set to one.
+Image promotion and deployment is governed by a single workflow `promote.yml`.  The workflow first deploys to the development environment directly after the <<Build,build>> takes place, and then uses a GitHub Action matrix to optionally deploy to any test environments defined int the <<System Definitions, System Definition File>>.  The matrix is able to run serially instead of in parallel thanks to the `max-parallel` value being set to one.
 
 .Environment matrix from promote.yml
 [source,YAML]
@@ -127,8 +142,7 @@ strategy:
     environment: ${{ fromJSON(inputs.environments) }}
 ----
 
-
-Promotion will involve three basic steps:
+Promotion should involve three basic steps:
 
 * Copying (or re-tagging) the image built in the <<Build, build>> step
 * Deploying the image to the new environment
@@ -147,17 +161,13 @@ test-environments:
   - stg
 ----
 
-==== Integration Test Step [TBD: requirements not fully defined]
+==== Integration Test Step [TBD: currently undefined]
 
 The integration test step will launch a Job in the component environment to run the tests from there.  The logs generated from the Job will be tailed for viewing in the GitHub Actions logs.
 
-===== TDB: Integration Test Artifacts and Resources
+===== Production Promotion and Deployment [TBD: currently undefined]
 
-Is the image for integration tests to be built with the component's test artifacts along with the component image beforehand, or will there be a single image holding the test tools, and the test artifacts and resources pulled and/or copied from a separate artifact repository?
-
-===== Production Promotion and Deployment
-
-It is expected that promotion to a production environment for final release will happen in a separate workflow call than that of the initial build and promote workflow, but will still use this particular reusable workflow.
+It is expected that promotion to a production environment for final release will happen in a separate workflow call than that of the initial build and promote workflow.
 
 === Component Repository Workflow Templates
 
@@ -165,9 +175,9 @@ It is expected that promotion to a production environment for final release will
 
 There is currently only one workflow templated for insertion into each component repository, and it first calls the centralized, reusable <<Build,build>> workflow, parses the <<System Definition File,system definition file>> for itself to get the test environments for its SDLC, and then calls the <<Promote and Deploy,promotion>> centralized, reusable workflow.  When a component is <<System Onboarding,onboarded>> the template will be realized and copied, committed, and pushed into the component repository for use by the developer.
 
-==== Promote to Production
+==== Promote to Production [TBD: currently undefined]
 
-It is expected that the promotion to production will use a separate workflow. Some considerations that will differentiate it from the generic promotion workflow:
+Promote to production, to potentially include:
 
-* Canary or blue/green deployments
+* Canary and/or blue/green deployments
 * Approval process
