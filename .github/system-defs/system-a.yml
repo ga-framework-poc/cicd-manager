@@ -10,7 +10,13 @@ components:
     status: active
     overrides:
       test: jest
+dev:
+  name: dev
+  size: small
+prod:
+  name: prod
+  size: large
 test-environments:
-  - qa
-  - uat
-  - stg
+  qa:  medium
+  uat: medium
+  stg: large

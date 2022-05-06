@@ -18,7 +18,7 @@ runs:
 
           if [[ ! -z ${COMPONENT_NAME} ]]
           then
-              OVERRIDE_STEP_NAME=$(echo ${OVERRIDES} | yq e '.${{ inputs.step-name }}' -)
+              OVERRIDE_STEP_NAME=$(echo ${OVERRIDES} | yq '.${{ inputs.step-name }}' -)
               if [[ ${OVERRIDE_STEP_NAME} != 'null' ]]
               then
                 echo "Step ${STEP_NAME} overridden by ${OVERRIDE_STEP_NAME}"

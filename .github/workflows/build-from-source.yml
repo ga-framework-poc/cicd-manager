@@ -32,7 +32,7 @@ jobs:
       uses: hippyod/cicd-manager/run-step@development
       with:
         label: infra
-        step-name: parse-system-def
+        step-name: parse-component-def
     - id: clone-app-repo
       name: clone-app-repo
       uses: actions/checkout@v2

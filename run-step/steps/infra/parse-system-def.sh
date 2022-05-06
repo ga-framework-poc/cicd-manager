@@ -1,16 +1,32 @@
 
 #!/usr/bin/bash
 
-set -x
+set -ex
 SYSTEM_DEFS_FILE=$(ls ${SYSTEM_DEFS_DIR}/${SYSTEM_NAME}.y*)
+echo "SYSTEM_DEFS_FILE=${SYSTEM_DEFS_FILE}" >> ${GITHUB_ENV}
 
-COMPONENT_NAME=$(basename ${WORKING_DIR})
-echo "COMPONENT_NAME=${COMPONENT_NAME}" >> ${GITHUB_ENV}
+DEV_BRANCH=$(yq '.branch' "${SYSTEM_DEFS_FILE}")
+echo "DEV_BRANCH: ${DEV_BRANCH}"
+echo "DEV_BRANCH=${DEV_BRANCH}" >> ${GITHUB_ENV}
 
-CODEBASE=$(yq e ".components[] | select(.repo == \"${COMPONENT_NAME}\") | .codebase" ${SYSTEM_DEFS_FILE})
-echo "CODEBASE=${CODEBASE}" >> ${GITHUB_ENV}
+REPO_NAMES=$(yq '[.organization + "/" + .components[].repo]' "${SYSTEM_DEFS_FILE}" -o json)
+echo "REPO_NAMES: ${REPO_NAMES}"
+echo "REPO_NAMES=${REPO_NAMES}" >> ${GITHUB_ENV}
 
-OVERRIDES=$(yq e ".components[] | select(.repo == \"${COMPONENT_NAME}\") | .overrides" ${SYSTEM_DEFS_FILE})
-echo "OVERRIDES=${OVERRIDES}" >> ${GITHUB_ENV}
+DEV_ENVIRONMENT=$(yq '.dev.name' "${SYSTEM_DEFS_FILE}")
+echo "DEV_ENVIRONMENT: ${DEV_ENVIRONMENT}"
+echo "DEV_ENVIRONMENT=${DEV_ENVIRONMENT}" >> ${GITHUB_ENV}
 
-set +x
+DEV_RESOURCEQUOTA=$(yq '.dev.size' "${SYSTEM_DEFS_FILE}")
+echo "DEV_RESOURCEQUOTA: ${DEV_RESOURCEQUOTA}"
+echo "DEV_RESOURCEQUOTA=${DEV_RESOURCEQUOTA}" >> ${GITHUB_ENV}
+
+TEST_ENVIRONMENTS=$(yq '.test-environments | keys' "${SYSTEM_DEFS_FILE}" -o json)
+echo "TEST_ENVIRONMENTS: ${TEST_ENVIRONMENTS}"
+echo "TEST_ENVIRONMENTS=${TEST_ENVIRONMENTS}" >> ${GITHUB_ENV}
+
+TEST_RESOURCEQUOTAS=$(yq '[.test-environments.*]' "${SYSTEM_DEFS_FILE}" -o json)
+echo "TEST_RESOURCEQUOTAS: ${TEST_RESOURCEQUOTAS}"
+echo "TEST_RESOURCEQUOTAS=${TEST_RESOURCEQUOTAS}" >> ${GITHUB_ENV}
+
+set +ex
