@@ -2,8 +2,6 @@
 
 set -ex
 
-oc login --insecure-skip-tls-verify -u ${{ secrets.OCP_USER }} -p ${{ secrets.OCP_CREDS }} ${{ secrets.OCP_URL }}
-
 echo 'Create OCP SDLC Environments'
 ENV_ARRAY=(${DEV_ENVIRONMENT}  $(echo ${TEST_ENVIRONMENTS} | jq -r '.[]'))
 RQ_ARRAY=(${DEV_RESOURCEQUOTA}  $(echo ${TEST_RESOURCEQUOTAS} | jq -r '.[]'))
@@ -26,4 +24,5 @@ do
     the
         oc create -f ${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY[${RQ_COUNTER}]}.yml
     fi
+    
 set +ex
