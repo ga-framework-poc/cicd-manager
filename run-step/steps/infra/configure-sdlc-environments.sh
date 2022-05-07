@@ -16,13 +16,16 @@ do
     else
         echo "${ENV} OCP Project ${OCP_PROJECT_NAME} found: SKIPPING"
     fi
-    
-    oc delete quotas --wait --ignore-not-found
+
+    oc delete quotas --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}
     sleep 2
 
     if [[ -f "${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY}.yml" ]]
     then
-        oc create -f ${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY[${RQ_COUNTER}]}.yml
+        RQ_FILE="${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY[${RQ_COUNTER}]}.yml"
+        oc create -f ${RQ_FILE}
+        oc label systemid=${SYSTEM_NAME} -f ${RQ_FILE} -n ${OCP_PROJECT_NAME}
     fi
+done
 
 set +ex
