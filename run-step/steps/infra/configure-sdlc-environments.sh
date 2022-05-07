@@ -17,7 +17,7 @@ do
         echo "${ENV} OCP Project ${OCP_PROJECT_NAME} found: SKIPPING"
     fi
 
-    oc delete quotas --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}
+    oc delete quota --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}
     sleep 2
 
     if [[ -f "${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY}.yml" ]]
