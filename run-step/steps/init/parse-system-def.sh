@@ -2,6 +2,7 @@
 #!/usr/bin/bash
 
 set -ex
+
 SYSTEM_DEFS_FILE=$(ls ${SYSTEM_DEFS_DIR}/${SYSTEM_NAME}.y*)
 echo "SYSTEM_DEFS_FILE=${SYSTEM_DEFS_FILE}" >> ${GITHUB_ENV}
 
@@ -25,7 +26,5 @@ echo "TEST_ENVIRONMENTS=${TEST_ENVIRONMENTS}" >> ${GITHUB_ENV}
 
 TEST_RESOURCEQUOTAS=$(yq '[.test-environments.*]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "TEST_RESOURCEQUOTAS=${TEST_RESOURCEQUOTAS}" >> ${GITHUB_ENV}
-
-echo "We made it!!!"
 
 set +ex
