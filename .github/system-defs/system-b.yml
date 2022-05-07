@@ -8,19 +8,15 @@ components:
   - repo: cicd-poc-app-2
     codebase: node16
     status: active
-dev:
-  name: dev
-  size: small
-prod:
-  name: prod
-  size: large
+dev-environment: dev
+prod-environment: prod
 test-environments:
-  qa:
-    name: qa
-    size: medium
-  uat:
-    name: uat
-    size: medium
-  stg:
-    name: stg
-    size: medium
+  - qa
+  - uat
+  - stg
+resource-quotas:
+  dev: small
+  qa: medium
+  uat: medium
+  stg: medium
+  prod: large

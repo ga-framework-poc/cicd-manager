@@ -21,10 +21,10 @@ echo "DEV_ENVIRONMENT=${DEV_ENVIRONMENT}" >> ${GITHUB_ENV}
 DEV_RESOURCEQUOTA=$(yq '.dev.size' "${SYSTEM_DEFS_FILE}")
 echo "DEV_RESOURCEQUOTA=${DEV_RESOURCEQUOTA}" >> ${GITHUB_ENV}
 
-TEST_ENVIRONMENTS=$(yq '.test-environments | keys' "${SYSTEM_DEFS_FILE}" -o json -I=0)
+TEST_ENVIRONMENTS=$(yq '.test-environments' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "TEST_ENVIRONMENTS=${TEST_ENVIRONMENTS}" >> ${GITHUB_ENV}
 
-TEST_RESOURCEQUOTAS=$(yq '[.test-environments.*]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
-echo "TEST_RESOURCEQUOTAS=${TEST_RESOURCEQUOTAS}" >> ${GITHUB_ENV}
+RESOURCE_QUOTAS=$(yq '[.resource-quotas]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
+echo "RESOURCE_QUOTAS=${RESOURCE_QUOTAS}" >> ${GITHUB_ENV}
 
 set +ex
