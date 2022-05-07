@@ -6,7 +6,7 @@ echo 'Create OCP SDLC Environments'
 
 jq --version
 
-ENV_ARRAY="${DEV_ENVIRONMENT} $(echo ${TEST_ENVIRONMENTS} | jq -jr  '.[] + " "')"
+ENV_ARRAY=$(echo "${DEV_ENVIRONMENT} $(echo ${TEST_ENVIRONMENTS} | jq -jr  '" " + .[]')" | xargs)
 echo "ENV_ARRAY: ${ENV_ARRAY}"
 for ENV in ${ENV_ARRAY}
 do
