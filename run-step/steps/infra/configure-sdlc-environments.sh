@@ -26,7 +26,7 @@ do
     RQ_FILE="${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_SIZE}.yml"
     if [[ ! -z "${RQ_SIZE}" && -f "${RQ_FILE}" ]]
     then
-        oc create -f ${RQ_FILE}
+        oc create -f ${RQ_FILE} -n ${OCP_PROJECT_NAME}
         oc label systemid=${SYSTEM_NAME} -f ${RQ_FILE} -n ${OCP_PROJECT_NAME}
     fi
 done
