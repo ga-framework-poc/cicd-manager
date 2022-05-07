@@ -21,8 +21,8 @@ do
     sleep 2
 
     if [[ -f "${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY}.yml" ]]
-    the
+    then
         oc create -f ${GITHUB_ACTION_PATH}/resources/resource-quotas/${RQ_ARRAY[${RQ_COUNTER}]}.yml
     fi
-    
+
 set +ex
