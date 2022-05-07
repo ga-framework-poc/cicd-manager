@@ -5,7 +5,7 @@ set -ex
 echo 'Create OCP SDLC Environments'
 
 ENV_ARRAY=(${DEV_ENVIRONMENT}  $(echo ${TEST_ENVIRONMENTS} | jq -jr  '.[] + " "'))
-RQ_COUNTER=1
+echo "ENV_ARRAY: ${ENV_ARRAY}"
 for ENV in ${ENV_ARRAY}
 do
     OCP_PROJECT_NAME="${SYSTEM_NAME}-${TEAM_NAME}-${ENV}"
