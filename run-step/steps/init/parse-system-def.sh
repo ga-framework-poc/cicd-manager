@@ -21,7 +21,7 @@ echo "DEV_ENVIRONMENT=${DEV_ENVIRONMENT}" >> ${GITHUB_ENV}
 TEST_ENVIRONMENTS=$(yq '.test-environments' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "TEST_ENVIRONMENTS=${TEST_ENVIRONMENTS}" >> ${GITHUB_ENV}
 
-RESOURCE_QUOTAS=$(yq '[.resource-quotas]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
+RESOURCE_QUOTAS=$(yq '.resource-quotas' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "RESOURCE_QUOTAS=${RESOURCE_QUOTAS}" >> ${GITHUB_ENV}
 
 set +ex
