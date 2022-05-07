@@ -4,7 +4,7 @@ set -ex
 
 echo 'Create OCP SDLC Environments'
 
-ENV_ARRAY=(${DEV_ENVIRONMENT}  $(echo ${TEST_ENVIRONMENTS} | | jq -jr  '.[] + " "'))
+ENV_ARRAY=(${DEV_ENVIRONMENT}  $(echo ${TEST_ENVIRONMENTS} | jq -jr  '.[] + " "'))
 RQ_COUNTER=1
 for ENV in ${ENV_ARRAY}
 do
