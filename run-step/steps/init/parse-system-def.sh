@@ -15,11 +15,8 @@ echo "DEV_BRANCH=${DEV_BRANCH}" >> ${GITHUB_ENV}
 REPO_NAMES=$(yq '[.organization + "/" + .components[].repo]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "REPO_NAMES=${REPO_NAMES}" >> ${GITHUB_ENV}
 
-DEV_ENVIRONMENT=$(yq '.dev.name' "${SYSTEM_DEFS_FILE}")
+DEV_ENVIRONMENT=$(yq '.dev-environment' "${SYSTEM_DEFS_FILE}")
 echo "DEV_ENVIRONMENT=${DEV_ENVIRONMENT}" >> ${GITHUB_ENV}
-
-DEV_RESOURCEQUOTA=$(yq '.dev.size' "${SYSTEM_DEFS_FILE}")
-echo "DEV_RESOURCEQUOTA=${DEV_RESOURCEQUOTA}" >> ${GITHUB_ENV}
 
 TEST_ENVIRONMENTS=$(yq '.test-environments' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "TEST_ENVIRONMENTS=${TEST_ENVIRONMENTS}" >> ${GITHUB_ENV}
