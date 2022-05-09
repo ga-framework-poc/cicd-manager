@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
-echo 
-echo 'Running the java11 build...'
-echo
+export JAVA_TOOL_OPTIONS=
+if [[ -f $(dirname ${0})/settings.xml ]]
+then
+    mvn -s $(dirname ${0})/settings.xml -DskipTests --batch-mode clean package
+else
+    mvn -DskipTests --batch-mode clean package
+fi

@@ -1,5 +1,5 @@
 #!/usr/bin/bash
 
 echo 
-echo 'Running the java11 scan...'
+echo 'Java 11 scan step not implemented; SKIPPING...'
 echo

@@ -1,5 +1,3 @@
 #!/usr/bin/bash
 
-echo 
-echo 'Building the image...'
-echo
+podman build --squash -t ${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_TAG} -f ${WORKDIR}/Dockerfile

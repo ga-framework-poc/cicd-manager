@@ -15,7 +15,7 @@ jobs:
       name: setup-environment
       uses: hippyod/cicd-manager/run-step@development
       with:
-        label: infra
+        label: init
         step-name: setup-environment
     - id: clone-cicd-manager-repo
       name: clone-cicd-manager-repo
@@ -28,7 +28,7 @@ jobs:
       name: parse-system-def
       uses: hippyod/cicd-manager/run-step@development
       with:
-        label: infra
+        label: init
         step-name: parse-component-def
     - id: clone-app-repo
       name: clone-app-repo
