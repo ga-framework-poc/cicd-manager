@@ -1,7 +1,8 @@
 
 #!/usr/bin/bash
 
-set -x
+set -ex
+
 COMPONENT_NAME=$(basename ${WORKING_DIR})
 echo "COMPONENT_NAME=${COMPONENT_NAME}" >> ${GITHUB_ENV}
 
@@ -11,4 +12,4 @@ echo "CODEBASE=${CODEBASE}" >> ${GITHUB_ENV}
 OVERRIDES=$(yq ".components[] | select(.repo == \"${COMPONENT_NAME}\") | .overrides" ${SYSTEM_DEFS_FILE})
 echo "OVERRIDES=${OVERRIDES}" >> ${GITHUB_ENV}
 
-set +x
+set +ex

@@ -29,6 +29,12 @@ jobs:
       uses: hippyod/cicd-manager/run-step@development
       with:
         label: init
+        step-name: parse-system-def
+    - id: parse-component-def
+      name: parse-component-def
+      uses: hippyod/cicd-manager/run-step@development
+      with:
+        label: init
         step-name: parse-component-def
     - id: clone-app-repo
       name: clone-app-repo
