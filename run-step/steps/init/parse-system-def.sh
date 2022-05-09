@@ -18,7 +18,7 @@ echo "TEAM_NAME=${TEAM_NAME}" >> ${GITHUB_ENV}
 DEV_BRANCH=$(yq '.branch' "${SYSTEM_DEFS_FILE}")
 echo "DEV_BRANCH=${DEV_BRANCH}" >> ${GITHUB_ENV}
 
-REPO_NAMES=$(yq "['${GITHUB_REPOSITORY_OWNER}' + '/' + .components[].repo]" "${SYSTEM_DEFS_FILE}" -o json -I=0)
+REPO_NAMES=$(yq '[env(GITHUB_REPOSITORY_OWNER) + '/' + .components[].repo]' "${SYSTEM_DEFS_FILE}" -o json -I=0)
 echo "REPO_NAMES=${REPO_NAMES}" >> ${GITHUB_ENV}
 
 DEV_ENVIRONMENT=$(yq '.dev-environment' "${SYSTEM_DEFS_FILE}")
