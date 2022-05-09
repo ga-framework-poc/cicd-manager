@@ -75,7 +75,7 @@ jobs:
     - id: registry-login
       name: registry-login
       run: |
-        podman login -u ${IMAGE_REGISTRY_USERNAME} -p ${{ secrets.IMAGE_REGISTRY)PWD }} ${IMAGE_REGISTRY_URL}
+        podman login -u ${IMAGE_REGISTRY_USERNAME} -p ${{ secrets.IMAGE_REGISTRY_PWD }} ${IMAGE_REGISTRY_URL}
     - id: push-image
       name: push-image
       uses: hippyod/cicd-manager/run-step@development
