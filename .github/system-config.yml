@@ -1,0 +1,3 @@
+image-registry:
+  url: quay.io
+  username: rhn_gps_eslatis
