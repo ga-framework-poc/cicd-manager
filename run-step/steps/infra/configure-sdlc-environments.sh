@@ -19,12 +19,13 @@ do
         echo "${ENV} OCP Project ${OCP_PROJECT_NAME} found: SKIPPING"
     fi
 
-    if [[ ! -z $(oc get --ignore-not-found --no-headers secret ${SYSTEM_NAME}-${TEAM_NAME}-pull-secret) ]]
+    if [[ -z $(oc get --ignore-not-found --no-headers secret ${SYSTEM_NAME}-${TEAM_NAME}-pull-secret) ]]
     then
-        oc create secret docker-registry system-a-pull-secret \                                        
+        oc create secret docker-registry ${SYSTEM_NAME}-${TEAM_NAME}-pull-secret \                                        
             --docker-username=${IMAGE_REGISTRY_USERNAME} \
             --docker-password=${IMAGE_REGISTRY_PWD} \
-            --docker-server=${IMAGE_REGISTRY_URL}
+            --docker-server=${IMAGE_REGISTRY_URL} \
+            -n ${OCP_PROJECT_NAME}
     fi
 
     oc delete quota --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}

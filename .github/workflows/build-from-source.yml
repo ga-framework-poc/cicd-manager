@@ -13,7 +13,7 @@ jobs:
     steps:
     - id: setup-environment
       name: setup-environment
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: init
         step-name: setup-environment
@@ -21,18 +21,18 @@ jobs:
       name: clone-cicd-manager-repo
       uses: actions/checkout@v2
       with:
-        repository: hippyod/cicd-manager
+        repository: ga-framework-poc/cicd-manager
         ref: development
         path: ${{ env.CICD_REPO_MGR_DIR }}
     - id: parse-system-def
       name: parse-system-def
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: init
         step-name: parse-system-def
     - id: parse-component-def
       name: parse-component-def
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: init
         step-name: parse-component-def
@@ -44,31 +44,31 @@ jobs:
         path: ${{ env.WORKING_DIR }}
     - id: build
       name: build
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: build
     - id: test
       name: test
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: test
     - id: scan
       name: scan
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: ${{ env.CODEBASE }}
         step-name: scan
     - id: build-image
       name: build-image
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: image
         step-name: build-image
     - id: scan-image
       name: scan-image
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: image
         step-name: scan-image
@@ -78,7 +78,7 @@ jobs:
         podman login -u ${IMAGE_REGISTRY_USERNAME} -p ${{ secrets.IMAGE_REGISTRY_PWD }} ${IMAGE_REGISTRY_URL}
     - id: push-image
       name: push-image
-      uses: hippyod/cicd-manager/run-step@development
+      uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: image
         step-name: push-image

@@ -20,17 +20,56 @@ jobs:
       matrix:
         environment: ${{ fromJSON(inputs.environments) }}
     steps:
+    - id: setup-environment
+      name: setup-environment
+      uses: ga-framework-poc/cicd-manager/run-step@development
+      with:
+        label: init
+        step-name: setup-environment
+    - id: clone-cicd-manager-repo
+      name: clone-cicd-manager-repo
+      uses: actions/checkout@v2
+      with:
+        repository: ga-framework-poc/cicd-manager
+        ref: development
+        path: ${{ env.CICD_REPO_MGR_DIR }}
+    - id: parse-system-def
+      name: parse-system-def
+      uses: ga-framework-poc/cicd-manager/run-step@development
+      with:
+        label: init
+        step-name: parse-system-def
+    - id: parse-component-def
+      name: parse-component-def
+      uses: ga-framework-poc/cicd-manager/run-step@development
+      with:
+        label: init
+        step-name: parse-component-def
+    - id: clone-app-repo
+      name: clone-app-repo
+      uses: actions/checkout@v2
+      with:
+        ref: development
+        path: ${{ env.WORKING_DIR }}
+    - id: define-current-env
+      name: define-current-env
+      run: |
+        set -ex
+        echo "VALUES_FILE=${WORKING_DIR}/.helm/values.yml" >> ${GITHUB_ENV}
+        echo "ENV_VALUES_FILE=${WORKING_DIR}/.helm/values-{{ matrix.environment }}.yml" >> ${GITHUB_ENV}
+        set +ex
     - id: promote
       if: matrix.environment != 'dev'
       name: promote
       run: |
         echo
-        echo "Promoting to ${{ matrix.environment }}..."
+        echo "[WARNING: NOT IMPLEMENTED] Promoting to ${{ matrix.environment }}..."
     - id: deploy
       name: deploy
-      run: |
-        echo
-        echo "Deploying to ${{ matrix.environment }}..."
+      uses: ga-framework-poc/cicd-manager/run-step@development
+      with:
+        label: deploy
+        step-name: upgrade-helm-chart
     - id: verify-deployment
       name: verify-deployment
       run: |
