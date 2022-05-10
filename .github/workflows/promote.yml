@@ -5,9 +5,6 @@ on:
       system-name:
         required: true
         type: string
-      team-name:
-        required: true
-        type: string
       environments:
         required: false
         type: string
@@ -15,6 +12,8 @@ on:
 jobs:
   promote-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      SYSTEM_NAME: ${{ inputs.system-name }}
     strategy:
       max-parallel: 1
       matrix:
