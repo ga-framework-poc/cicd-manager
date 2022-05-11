@@ -9,8 +9,8 @@ do
 done
 
 find ${CICD_REPO_ONBOARDING_DIR}/.github-app-template/workflows/ -type f \( -iname \*.yml -o -iname \*.yaml \) \
--exec sed -i -e "s/%SYSTEM_NAME%/${SYSTEM_NAME}/g" \
-                -e "s/%TEAM_NAME%/${TEAM_NAME}/g" {} +
+    -exec sed -i -e "s/%SYSTEM_NAME%/${SYSTEM_NAME}/g" \
+                    -e "s/%TEAM_NAME%/${TEAM_NAME}/g" {} +
 
 cp -RT ${CICD_REPO_ONBOARDING_DIR}/.github-app-template ${WORKING_DIR}/.github
 
