@@ -16,12 +16,14 @@ do
 
     SERVICE_ACCOUNT_NAME=${SYSTEM_NAME}-${TEAM_NAME}-service-account
     SA_SECRET_NAME=$(oc get secrets -o custom-columns=:.metadata.name -n ${OCP_PROJECT_NAME} | grep -m 1 ${SERVICE_ACCOUNT_NAME}-token)
+    set +x
     SA_TOKEN="$(oc get secrets ${SA_SECRET_NAME} -o custom-columns=:.data.token -n ${OCP_PROJECT_NAME} | tr -d '[:space:]')"
+    set -x
     SA_TOKEN_DECODE="$(echo ${SA_TOKEN} | base64 -d)"
 
     oc login --token=${SA_TOKEN_DECODE} ${OCP_URL}
 
-    gh secret set OCP_SA_TOKEN --body "${SA_TOKEN_DECODE}" -R ${REPO_NAMES}
+    gh secret set OCP_SA_TOKEN --body "${SA_TOKEN_DECODE}" -R ${REPO_NAME}
 done
 
 set +ex
