@@ -5,19 +5,11 @@ on:
       system-name:
         required: true
         type: string
-      environments:
-        required: false
-        type: string
-        default: '["dev"]'
 jobs:
-  promote-and-deploy:
+  gather-system-info:
     runs-on: ubuntu-latest
     env:
       SYSTEM_NAME: ${{ inputs.system-name }}
-    strategy:
-      max-parallel: 1
-      matrix:
-        environment: ${{ fromJSON(inputs.environments) }}
     steps:
     - id: setup-environment
       name: setup-environment
@@ -44,44 +36,58 @@ jobs:
       with:
         label: init
         step-name: parse-component-def
+    outputs:
+      WORKING_DIR: ${{ env.WORKING_DIR }}
+      HELM_CHART_DIR: ${{ env.HELM_CHART_DIR }}
+      COMPONENT_NAME: ${{ env.COMPONENT_NAME }}
+      DEV_BRANCH: ${{ env.DEV_BRANCH }}
+      NON_PROD_ENVIRONMENTS: ${{ env.NON_PROD_ENVIRONMENTS }}
+  promote-and-deploy:
+    needs: gather-system-info
+    env:
+      WORKING_DIR: ${{ needs.gather-system-info.outputs.WORKING_DIR }}
+      HELM_CHART_DIR: ${{ needs.gather-system-info.outputs.HELM_CHART_DIR }}
+      COMPONENT_NAME: ${{ needs.gather-system-info.outputs.COMPONENT_NAME }}
+    strategy:
+      max-parallel: 1
+      matrix:
+        environment: ${{ fromJSON(needs.gather-system-info.outputs.NON_PROD_ENVIRONMENTS) }}
+    steps:
+    - id: set-env
+      name: set-env
+      run: |
+        DEPLOY_ENV=${{ matrix.environment }}
+        echo "DEPLOY_ENV: ${DEPLOY_ENV}" >> ${GITHUB_ENV}
+        echo "OCP_SA_${DEPLOY_ENV}_TOKEN: ${{ secrets.IMAGE_REGISTRY_PWD }}" >> ${GITHUB_ENV}
+    - id: set-token
+      name: set-token
+      run: |
+        echo "OCP_SA_${DEPLOY_ENV}_TOKEN: ${{ secrets[format('OCP_SA_{0}_TOKEN', env.DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
     - id: clone-app-repo
       name: clone-app-repo
       uses: actions/checkout@v2
       with:
-        ref: development
+        ref: ${{ needs.gather-system-info.outputs.DEV_BRANCH }}
         path: ${{ env.WORKING_DIR }}
-    - id: define-current-env
-      name: define-current-env
-      run: |
-        set -ex
-        echo "VALUES_FILE=${HELM_CHART_DIR}/values.yml" >> ${GITHUB_ENV}
-        echo "ENV_VALUES_FILE=${HELM_CHART_DIR}/values-${{ matrix.environment }}.yml" >> ${GITHUB_ENV}
-        set +ex
     - id: promote
       if: matrix.environment != 'dev'
       name: promote
       run: |
         echo
-        echo "[WARNING: NOT IMPLEMENTED] Promoting to ${{ matrix.environment }}..."
-    - id: oc-login
-      name: oc-login
-      run: |
-        oc login --insecure-skip-tls-verify -u ${{ secrets.OCP_USER }} -p ${{ secrets.OCP_CREDS }} ${{ secrets.OCP_URL }}
-        oc version
-        helm version
-    - id: deploy
-      name: deploy
+        echo "[WARNING: NOT IMPLEMENTED] Promoting to ${DEPLOY_ENV}..."
+    - id: upgrade-helm-chart
+      name: upgrade-helm-chart
       uses: ga-framework-poc/cicd-manager/run-step@development
       with:
         label: deploy
         step-name: upgrade-helm-chart
-    - id: verify-deployment
-      name: verify-deployment
+    - id: verify-deployment-and-gather-evidence
+      name: verify-deployment-and-gather-evidence
       run: |
         echo
-        echo "Verifying deployment in ${{ matrix.environment }}..."
-    - id: publish-results
-      name: publish-results
+        echo "[WARNING: NOT IMPLEMENTED] Verifying deployment and gathering evidence for deployment of ${COMPONENT_NAME} in ${DEPLOY_ENV}..."
+    - id: publish-evidence
+      name: publish-evidence
       run: |
         echo
-        echo "Publishing results for ${{ matrix.environment }}..."
+        echo "[WARNING: NOT IMPLEMENTED] Publishing evidence of successful deployment of ${COMPONENT_NAME} in ${DEPLOY_ENV}..."

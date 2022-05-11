@@ -21,7 +21,8 @@ do
     SA_TOKEN_DECODE="$(echo ${SA_TOKEN} | base64 -d)"
     set -x
 
-    (cd ${WORKING_DIR}; gh secret set OCP_SA_${ENV}_TOKEN --body "${SA_TOKEN_DECODE}")
+    UPPERCASE_ENV=$(echo ${ENV} | tr '[:lower:]' '[:upper:]')
+    (cd ${WORKING_DIR}; gh secret set OCP_SA_${UPPERCASE_ENV}_TOKEN --body "${SA_TOKEN_DECODE}")
 done
 
 set +ex
