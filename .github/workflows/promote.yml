@@ -43,6 +43,7 @@ jobs:
       DEV_BRANCH: ${{ env.DEV_BRANCH }}
       NON_PROD_ENVIRONMENTS: ${{ env.NON_PROD_ENVIRONMENTS }}
   promote-and-deploy:
+    runs-on: ubuntu-latest
     needs: gather-system-info
     env:
       WORKING_DIR: ${{ needs.gather-system-info.outputs.WORKING_DIR }}
