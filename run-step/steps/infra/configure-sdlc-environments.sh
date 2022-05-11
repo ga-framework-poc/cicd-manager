@@ -4,7 +4,11 @@ set -ex
 
 echo 'Create OCP SDLC Environments'
 
+oc version
+helm version
 jq --version
+
+oc login --insecure-skip-tls-verify -u ${OCP_USER} -p ${OCP_CREDS} ${OCP_URL}
 
 ENV_ARRAY=$(echo "${DEV_ENVIRONMENT} $(echo ${TEST_ENVIRONMENTS} | jq -jr  '" " + .[]')" | xargs)
 echo "ENV_ARRAY: ${ENV_ARRAY}"
@@ -27,6 +31,13 @@ do
             --docker-password=${IMAGE_REGISTRY_PWD} \
             --docker-server=${IMAGE_REGISTRY_URL} \
             -n ${OCP_PROJECT_NAME}
+    fi
+
+    SERVICE_ACCOUNT_NAME=${SYSTEM_NAME}-${TEAM_NAME}-service-account
+    if [[ -z $(oc get sa --ignore-not-found --no-headers ${SERVICE_ACCOUNT_NAME} -n ${OCP_PROJECT_NAME}) ]]
+    then
+        oc create sa ${SERVICE_ACCOUNT_NAME} -n ${OCP_PROJECT_NAME}
+        oc policy add-role-to-user edit -z ${SERVICE_ACCOUNT_NAME} -n ${OCP_PROJECT_NAME}
     fi
 
     oc delete quota --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}
