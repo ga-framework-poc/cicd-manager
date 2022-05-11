@@ -23,7 +23,7 @@ do
 
     oc login --token=${SA_TOKEN_DECODE} ${OCP_URL}
 
-    gh auth login --with-token < $(echo ${ONBOARDING_CREDS})
+    gh auth login --with-token <<< ${ONBOARDING_CREDS}
     gh secret set OCP_SA_TOKEN --body "${SA_TOKEN_DECODE}" -R ${REPO_NAME}
 done
 
