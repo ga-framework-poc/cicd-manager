@@ -22,7 +22,11 @@ do
     PULL_SECRET_NAME=${SYSTEM_NAME}-${TEAM_NAME}-pull-secret
     if [[ -z $(oc get secret --ignore-not-found --no-headers ${PULL_SECRET_NAME} -n ${OCP_PROJECT_NAME}) ]]
     then
-        oc create secret docker-registry ${PULL_SECRET_NAME}  --docker-username=${IMAGE_REGISTRY_USERNAME}  --docker-password=${IMAGE_REGISTRY_PWD}  --docker-server=${IMAGE_REGISTRY_URL} -n ${OCP_PROJECT_NAME}
+        oc create secret docker-registry ${PULL_SECRET_NAME} \
+            --docker-username=${IMAGE_REGISTRY_USERNAME} \
+            --docker-password=${IMAGE_REGISTRY_PWD} \
+            --docker-server=${IMAGE_REGISTRY_URL} \
+            -n ${OCP_PROJECT_NAME}
     fi
 
     oc delete quota --wait --ignore-not-found -l systemid=${SYSTEM_NAME} -n ${OCP_PROJECT_NAME}
