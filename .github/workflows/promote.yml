@@ -54,8 +54,8 @@ jobs:
       name: define-current-env
       run: |
         set -ex
-        echo "VALUES_FILE=${WORKING_DIR}/.helm/values.yml" >> ${GITHUB_ENV}
-        echo "ENV_VALUES_FILE=${WORKING_DIR}/.helm/values-{{ matrix.environment }}.yml" >> ${GITHUB_ENV}
+        echo "VALUES_FILE=${HELM_CHART_DIR}/values.yml" >> ${GITHUB_ENV}
+        echo "ENV_VALUES_FILE=${HELM_CHART_DIR}/values-${{ matrix.environment }}.yml" >> ${GITHUB_ENV}
         set +ex
     - id: promote
       if: matrix.environment != 'dev'
@@ -63,6 +63,12 @@ jobs:
       run: |
         echo
         echo "[WARNING: NOT IMPLEMENTED] Promoting to ${{ matrix.environment }}..."
+    - id: oc-login
+      name: oc-login
+      run: |
+        oc login --insecure-skip-tls-verify -u ${{ secrets.OCP_USER }} -p ${{ secrets.OCP_CREDS }} ${{ secrets.OCP_URL }}
+        oc version
+        helm version
     - id: deploy
       name: deploy
       uses: ga-framework-poc/cicd-manager/run-step@development

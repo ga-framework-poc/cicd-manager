@@ -6,6 +6,9 @@ set -ex
 COMPONENT_NAME=$(basename ${WORKING_DIR})
 echo "COMPONENT_NAME=${COMPONENT_NAME}" >> ${GITHUB_ENV}
 
+HELM_CHART_DIR=${WORKING_DIR}/.helm
+echo "HELM_CHART_DIR=${HELM_CHART_DIR}" >> ${GITHUB_ENV}
+
 IMAGE_NAME=$(echo "${COMPONENT_NAME}" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]' | tr -c '[:alnum:]' '_' )
 echo "IMAGE_NAME=${IMAGE_NAME}" >> ${GITHUB_ENV}
 
