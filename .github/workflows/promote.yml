@@ -58,12 +58,12 @@ jobs:
       name: set-env
       run: |
         DEPLOY_ENV=${{ matrix.environment }}
-        echo "DEPLOY_ENV: ${DEPLOY_ENV}" >> ${GITHUB_ENV}
-        echo "OCP_SA_${DEPLOY_ENV}_TOKEN: ${{ secrets.IMAGE_REGISTRY_PWD }}" >> ${GITHUB_ENV}
+        echo "DEPLOY_ENV=${DEPLOY_ENV}" >> ${GITHUB_ENV}
+        echo "OCP_SA_${DEPLOY_ENV}_TOKEN=${{ secrets.IMAGE_REGISTRY_PWD }}" >> ${GITHUB_ENV}
     - id: set-token
       name: set-token
       run: |
-        echo "OCP_SA_${DEPLOY_ENV}_TOKEN: ${{ secrets[format('OCP_SA_{0}_TOKEN', env.DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
+        echo "OCP_SA_${DEPLOY_ENV}_TOKEN=${{ secrets[format('OCP_SA_{0}_TOKEN', env.DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
     - id: clone-app-repo
       name: clone-app-repo
       uses: actions/checkout@v2
