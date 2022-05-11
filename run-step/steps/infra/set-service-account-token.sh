@@ -15,8 +15,8 @@ do
     OCP_PROJECT_NAME="${SYSTEM_NAME}-${TEAM_NAME}-${ENV}"
 
     SERVICE_ACCOUNT_NAME=${SYSTEM_NAME}-${TEAM_NAME}-service-account
-    SA_SECRET_NAME=$(oc get secrets -o custom-columns=:.metadata.name | grep -m 1 ${SERVICE_ACCOUNT_NAME}-token)
-    SA_TOKEN="$(oc get secrets ${SA_SECRET_NAME} -o custom-columns=:.data.token | tr -d '[:space:]')"
+    SA_SECRET_NAME=$(oc get secrets -o custom-columns=:.metadata.name -n ${OCP_PROJECT_NAME} | grep -m 1 ${SERVICE_ACCOUNT_NAME}-token)
+    SA_TOKEN="$(oc get secrets ${SA_SECRET_NAME} -o custom-columns=:.data.token -n ${OCP_PROJECT_NAME} | tr -d '[:space:]')"
     SA_TOKEN_DECODE="$(echo ${SA_TOKEN} | base64 -d)"
 
     oc login --token=${SA_TOKEN_DECODE} ${OCP_URL}
