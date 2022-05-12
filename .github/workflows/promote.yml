@@ -83,6 +83,7 @@ jobs:
       if: matrix.environment != 'dev'
       name: promote
       run: |
+        skopeo --version
         echo
         echo "[WARNING: NOT IMPLEMENTED] Promoting to ${DEPLOY_ENV}..."
     - id: upgrade-helm-chart

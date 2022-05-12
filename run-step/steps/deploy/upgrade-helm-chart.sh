@@ -4,6 +4,12 @@ set -ex
 
 oc login --insecure-skip-tls-verify --token ${OCP_SA_TOKEN} ${OCP_URL}
 
+echo
+ls ${WORKING_DIR}
+echo
+ls ${HELM_CHART_DIR}
+echo
+
 VALUES_FILE=${HELM_CHART_DIR}/values.yml
 if [[ -f ${VALUES_FILE} ]]
 then
