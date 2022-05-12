@@ -10,13 +10,13 @@ echo
 ls ${HELM_CHART_DIR}
 echo
 
-VALUES_FILE=${HELM_CHART_DIR}/values.yml
+VALUES_FILE=$(find ${HELM_CHART_DIR} -name "values.y*ml")
 if [[ -f ${VALUES_FILE} ]]
 then
     DEPLOY_VALUES_FILE="--values ${VALUES_FILE}"
 fi
 
-ENV_VALUES_FILE=${HELM_CHART_DIR}/values-${DEPLOY_ENV}.yml
+ENV_VALUES_FILE=$(find ${HELM_CHART_DIR} -name "values-${DEPLOY_ENV}.y*ml")
 if [[ -f ${ENV_VALUES_FILE} ]]
 then
     DEPLOY_ENV_VALUES_FILE="--values ${ENV_VALUES_FILE}"
