@@ -62,7 +62,7 @@ jobs:
     - id: set-ocp-sa-token
       name: set-ocp-sa-token
       run: |
-        echo "OCP_SA_${!UPPERCASE_DEPLOY_ENV}_TOKEN=${{ secrets[format('OCP_SA_{0}_TOKEN', env.UPPERCASE_DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
+        echo "OCP_SA_TOKEN=${{ secrets[format('OCP_SA_{0}_TOKEN', env.UPPERCASE_DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
     - id: clone-app-repo
       name: clone-app-repo
       uses: actions/checkout@v2
