@@ -5,11 +5,11 @@ on:
       system-name:
         required: true
         type: string
+env:
+  SYSTEM_NAME: ${{ github.event.inputs.system-name }}
 jobs:
   gather-system-info:
     runs-on: ubuntu-latest
-    env:
-      SYSTEM_NAME: ${{ inputs.system-name }}
     steps:
     - id: setup-environment
       name: setup-environment
@@ -37,6 +37,7 @@ jobs:
         label: init
         step-name: parse-component-def
     outputs:
+      TEAM_NAME: ${{ env.TEAM_NAME }}
       WORKING_DIR: ${{ env.WORKING_DIR }}
       HELM_CHART_DIR: ${{ env.HELM_CHART_DIR }}
       COMPONENT_NAME: ${{ env.COMPONENT_NAME }}
@@ -46,6 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: gather-system-info
     env:
+      TEAM_NAME: ${{ needs.gather-system-info.outputs.TEAM_NAME }}
       WORKING_DIR: ${{ needs.gather-system-info.outputs.WORKING_DIR }}
       HELM_CHART_DIR: ${{ needs.gather-system-info.outputs.HELM_CHART_DIR }}
       COMPONENT_NAME: ${{ needs.gather-system-info.outputs.COMPONENT_NAME }}
