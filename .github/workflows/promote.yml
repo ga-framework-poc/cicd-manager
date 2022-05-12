@@ -50,6 +50,7 @@ jobs:
       HELM_CHART_DIR: ${{ needs.gather-system-info.outputs.HELM_CHART_DIR }}
       COMPONENT_NAME: ${{ needs.gather-system-info.outputs.COMPONENT_NAME }}
       OCP_URL: ${{ secrets.OCP_URL }}
+      NON_PROD_ENVIRONMENTS: ${{ needs.gather-system-info.outputs.NON_PROD_ENVIRONMENTS }}
     strategy:
       max-parallel: 1
       matrix:
