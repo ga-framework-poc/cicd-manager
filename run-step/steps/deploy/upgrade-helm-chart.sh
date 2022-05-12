@@ -2,7 +2,7 @@
 
 set -ex
 
-oc login --insecure-skip-tls-verify --token $(eval \${OCP_SA_${DEPLOY_ENV}_TOKEN}) ${OCP_URL}
+oc login --insecure-skip-tls-verify --token $(eval \${OCP_SA_${UPPERCASE_DEPLOY_ENV}_TOKEN}) ${OCP_URL}
 
 VALUES_FILE=${HELM_CHART_DIR}/values.yml
 if [[ -f ${VALUES_FILE} ]]
