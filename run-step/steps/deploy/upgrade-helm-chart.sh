@@ -10,7 +10,7 @@ then
     DEPLOY_VALUES_FILE="--values ${VALUES_FILE}"
 fi
 
-ENV_VALUES_FILE=${HELM_CHART_DIR}/values-${.yml
+ENV_VALUES_FILE=${HELM_CHART_DIR}/values-${DEPLOY_ENV}.yml
 if [[ -f ${ENV_VALUES_FILE} ]]
 then
     DEPLOY_ENV_VALUES_FILE="--values ${ENV_VALUES_FILE}"
