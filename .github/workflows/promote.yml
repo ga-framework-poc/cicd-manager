@@ -49,6 +49,7 @@ jobs:
       WORKING_DIR: ${{ needs.gather-system-info.outputs.WORKING_DIR }}
       HELM_CHART_DIR: ${{ needs.gather-system-info.outputs.HELM_CHART_DIR }}
       COMPONENT_NAME: ${{ needs.gather-system-info.outputs.COMPONENT_NAME }}
+      OCP_URL: ${{ secrets.OCP_URL }}
     strategy:
       max-parallel: 1
       matrix:
@@ -62,8 +63,7 @@ jobs:
     - id: set-ocp-sa-token
       name: set-ocp-sa-token
       run: |
-        OCP_SA_TOKEN=${{ secrets[format('OCP_SA_{0}_TOKEN', env.UPPERCASE_DEPLOY_ENV)] }}
-        echo "OCP_SA_TOKEN=${OCP_SA_TOKEN}" >> ${GITHUB_ENV}
+        echo "OCP_SA_TOKEN=${{ secrets[format('OCP_SA_{0}_TOKEN', env.UPPERCASE_DEPLOY_ENV)] }}" >> ${GITHUB_ENV}
     - id: clone-app-repo
       name: clone-app-repo
       uses: actions/checkout@v2
