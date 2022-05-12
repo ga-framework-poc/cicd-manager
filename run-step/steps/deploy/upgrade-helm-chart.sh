@@ -4,13 +4,13 @@ set -ex
 
 oc login --insecure-skip-tls-verify --token ${OCP_SA_TOKEN} ${OCP_URL}
 
-VALUES_FILE=$(find ${HELM_CHART_DIR} -name "values.y*ml")
+VALUES_FILE=$(test -d ${HELM_CHART_DIR} && find ${HELM_CHART_DIR} -name "values.y*ml")
 if [[ -f "${VALUES_FILE}" ]]
 then
     DEPLOY_VALUES_FILE="--values ${VALUES_FILE}"
 fi
 
-ENV_VALUES_FILE=$(find ${HELM_CHART_DIR} -name "values-${DEPLOY_ENV}.y*ml")
+ENV_VALUES_FILE=$(test -d ${HELM_CHART_DIR} && find ${HELM_CHART_DIR} -name "values-${DEPLOY_ENV}.y*ml")
 if [[ -f "${ENV_VALUES_FILE}" ]]
 then
     DEPLOY_ENV_VALUES_FILE="--values ${ENV_VALUES_FILE}"
